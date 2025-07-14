@@ -1,6 +1,12 @@
-import axios from 'axios';
-import type { AxiosResponse } from 'axios';
-import type { Note, NoteTag } from '../types/note';
+import { Note, NoteTag } from '@/types/note';
+import { handleError, instance } from '../api/api';
+import { User } from '@/types/user';
+import { AxiosResponse } from 'axios';
+
+interface AuthentificationData {
+  email: string;
+  password: string;
+}
 
 export interface NoteHubResponse {
   notes: Note[];
@@ -20,22 +26,46 @@ interface CreateNoteParams {
   tag: NoteTag;
 }
 
-const noteHubToken = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
-const baseUrl = 'https://notehub-public.goit.study/api';
+export async function userRegistration(
+  data: AuthentificationData
+): Promise<User> {
+  try {
+    const response: AxiosResponse<User> = await instance.post(
+      'auth/register',
+      data
+    );
+    return response.data;
+  } catch (error) {
+    return handleError(
+      error,
+      'Oops! Sign up failed. Please check your details and try again.'
+    );
+  }
+}
 
-const instance = axios.create({
-  baseURL: baseUrl,
-  headers: {
-    Authorization: `Bearer ${noteHubToken}`,
-  },
-});
+export async function userLogIn(data: AuthentificationData): Promise<User> {
+  try {
+    const response: AxiosResponse<User> = await instance.post(
+      'auth/login',
+      data
+    );
+    return response.data;
+  } catch (error) {
+    return handleError(
+      error,
+      'Oops! Login failed. Please check your email and password and try again.'
+    );
+  }
+}
 
-function handleError(error: unknown, errorMessage: string): never {
-  if (axios.isAxiosError(error)) {
-    const message = error.response?.data?.message || error.message;
-    throw new Error(`${errorMessage}: ${message}`);
-  } else {
-    throw new Error(errorMessage);
+export async function userLogOut(): Promise<void> {
+  try {
+    await instance.post('auth/logout');
+  } catch (error) {
+    return handleError(
+      error,
+      'Oops! Something went wrong while logging out. Please try again.'
+    );
   }
 }
 
@@ -80,7 +110,7 @@ export async function createNote(newNote: CreateNoteParams): Promise<Note> {
     );
     return response.data;
   } catch (error) {
-    handleError(error, 'Cannot create a note');
+    return handleError(error, 'Cannot create a note');
   }
 }
 

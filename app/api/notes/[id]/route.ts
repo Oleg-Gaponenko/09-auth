@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { api } from "../../api";
-import { cookies } from "next/headers";
+import { NextResponse } from 'next/server';
+import { api } from '../../api';
+import { cookies } from 'next/headers';
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -17,7 +17,7 @@ export async function GET(request: Request, { params }: Props) {
   if (data) {
     return NextResponse.json(data);
   }
-  return NextResponse.json({ error: "Failed to fetch note" }, { status: 500 });
+  return NextResponse.json({ error: 'Failed to fetch note' }, { status: 500 });
 }
 
 export async function DELETE(request: Request, { params }: Props) {
@@ -31,13 +31,13 @@ export async function DELETE(request: Request, { params }: Props) {
       },
     });
     return NextResponse.json(
-      { message: "Note deleted successfully" },
+      { message: 'Note deleted successfully' },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting note:", error);
+    console.error('Error deleting note:', error);
     return NextResponse.json(
-      { error: "Failed to delete note" },
+      { error: 'Failed to delete note' },
       { status: 500 }
     );
   }
@@ -58,13 +58,13 @@ export async function PATCH(request: Request, { params }: Props) {
       return NextResponse.json(data);
     }
     return NextResponse.json(
-      { error: "Failed to update note" },
+      { error: 'Failed to update note' },
       { status: 500 }
     );
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { error: "Failed to update note" },
+      { error: 'Failed to update note' },
       { status: 500 }
     );
   }

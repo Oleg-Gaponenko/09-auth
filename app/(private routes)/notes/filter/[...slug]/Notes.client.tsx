@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 import css from './Notes.module.css';
-import SearchBox from '../../../../components/SearchBox/SearchBox';
-import NoteList from '../../../../components/NoteList/NoteList';
-import Pagination from '../../../../components/Pagination/Pagination';
+import SearchBox from '../../../../../components/SearchBox/SearchBox';
+import NoteList from '../../../../../components/NoteList/NoteList';
+import Pagination from '../../../../../components/Pagination/Pagination';
 import { useDebounce } from 'use-debounce';
-import { fetchNotes, type NoteHubResponse } from '../../../../lib/api';
+import { fetchNotes, type NoteHubResponse } from '../../../../../lib/api/api';
 import { useQuery } from '@tanstack/react-query';
-import Loader from '../../../../components/Loader/Loader';
-import ErrorMessage from '../../../../components/ErrorMessage/ErrorMessage';
-import AbsentDataMessage from '../../../../components/AbsentDataMessage/AbsentDataMessage';
+import Loader from '../../../../../components/Loader/Loader';
+import ErrorMessage from '../../../../../components/ErrorMessage/ErrorMessage';
+import AbsentDataMessage from '../../../../../components/AbsentDataMessage/AbsentDataMessage';
 import { NoteTag } from '@/types/note';
 import Link from 'next/link';
 
