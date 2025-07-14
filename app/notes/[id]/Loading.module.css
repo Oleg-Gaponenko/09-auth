@@ -1,0 +1,16 @@
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.loading {
+  color: #fff;
+  background-color: #0d6efd;
+  padding: 20px 30px;
+  border-radius: 4px;
+  text-align: center;
+  max-width: 80%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
