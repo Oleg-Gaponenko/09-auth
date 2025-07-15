@@ -3,7 +3,7 @@ import { handleError, instance } from '../api/api';
 import { User } from '@/types/user';
 import { AxiosResponse } from 'axios';
 
-interface AuthentificationData {
+interface AuthenticationData {
   email: string;
   password: string;
 }
@@ -26,8 +26,13 @@ interface CreateNoteParams {
   tag: NoteTag;
 }
 
+interface UpdateUserProfile {
+  username: string;
+  avatar?: string;
+}
+
 export async function userRegistration(
-  data: AuthentificationData
+  data: AuthenticationData
 ): Promise<User> {
   try {
     const response: AxiosResponse<User> = await instance.post(
@@ -43,7 +48,7 @@ export async function userRegistration(
   }
 }
 
-export async function userLogIn(data: AuthentificationData): Promise<User> {
+export async function userLogIn(data: AuthenticationData): Promise<User> {
   try {
     const response: AxiosResponse<User> = await instance.post(
       'auth/login',
@@ -135,3 +140,15 @@ export async function fetchNoteById(noteId: number): Promise<Note> {
     return handleError(error, 'Cannot fetch a note by ID');
   }
 }
+
+export async function updateUserProfile (data: UpdateUserProfile): Promise<User> {
+  try {
+    const response: AxiosResponse<User> = await instance.patch(
+      '/users/me',
+      data
+    );
+    return response.data;
+  } catch (error) {
+    return handleError(error, 'Cannot update your profile! Please try again!');
+  }
+};

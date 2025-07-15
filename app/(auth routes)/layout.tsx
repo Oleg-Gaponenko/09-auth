@@ -1,9 +1,5 @@
 import { ReactNode } from 'react';
 
-export default function Authentification({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function Authentication({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }

@@ -4,10 +4,12 @@ import css from './sign-in.module.css';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import { userLogIn } from '@/lib/api/clientApi';
+import { useAuthenticationStore } from '@/lib/store/authStore';
 
 export default function SignInPage() {
   const router = useRouter();
   const [error, setError] = useState('');
+  const setUser = useAuthenticationStore(state => state.setUser);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,7 +23,8 @@ export default function SignInPage() {
     }
 
     try {
-      await userLogIn({ email, password });
+      const user = await userLogIn({ email, password });
+      setUser(user);
       router.push('/profile');
     } catch (error: any) {
       setError(

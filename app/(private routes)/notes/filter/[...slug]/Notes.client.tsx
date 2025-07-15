@@ -6,7 +6,10 @@ import SearchBox from '../../../../../components/SearchBox/SearchBox';
 import NoteList from '../../../../../components/NoteList/NoteList';
 import Pagination from '../../../../../components/Pagination/Pagination';
 import { useDebounce } from 'use-debounce';
-import { fetchNotes, type NoteHubResponse } from '../../../../../lib/api/api';
+import {
+  fetchNotes,
+  type NoteHubResponse,
+} from '../../../../../lib/api/clientApi';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '../../../../../components/Loader/Loader';
 import ErrorMessage from '../../../../../components/ErrorMessage/ErrorMessage';
