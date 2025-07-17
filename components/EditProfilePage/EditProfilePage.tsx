@@ -1,21 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User } from '@/types/user';
 import css from './EditProfilePage.module.css';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { updateUserProfile } from '@/lib/api/clientApi';
 import toast from 'react-hot-toast';
+import Loader from '../Loader/Loader';
+import { useAuthenticationStore } from '@/lib/store/authStore';
 
-interface UserProps {
-  user: User;
-}
-
-export default function EditProfilePage({ user }: UserProps) {
+export default function EditProfilePage() {
   const router = useRouter();
-  const [username, setUsername] = useState(user.username);
-  const [avatar, setAvatar] = useState(user.avatar ?? '');
+  const { user, isAuthenticated } = useAuthenticationStore();
+  const [username, setUsername] = useState('');
+  const [avatar, setAvatar] = useState('');
+
+  if (!isAuthenticated || !user) return <Loader />;
+
+  useEffect(() => {
+    if (user) {
+      setUsername(user.username ?? '');
+      setAvatar(user.avatar ?? '');
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/sign-in');
+    }
+  }, [isAuthenticated]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();

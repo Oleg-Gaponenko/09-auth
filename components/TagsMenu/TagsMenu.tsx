@@ -4,15 +4,23 @@ import css from './TagsMenu.module.css';
 import Link from 'next/link';
 import { NoteTag } from '../../types/note';
 import { useEffect, useRef, useState } from 'react';
+import { useAuthenticationStore } from '@/lib/store/authStore';
+import { useRouter } from 'next/navigation';
 
 const tags: NoteTag[] = ['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'];
 
 export default function TagsMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated } = useAuthenticationStore();
+  const router = useRouter();
 
   const toggleMenu = () => {
-    setIsOpen(previous => !previous);
+    if (!isAuthenticated) {
+      router.push('/sign-in');
+    } else {
+      setIsOpen(previous => !previous);
+    }
   };
 
   useEffect(() => {

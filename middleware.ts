@@ -19,28 +19,11 @@ export async function middleware(request: NextRequest) {
   const isPublic = authRoutes.some((route) => pathname.startsWith(route));
 
   if (isPrivate && !accessToken) {
-    if (refreshToken) {
-      try {
-        await fetch(
-          new URL('/api/auth/session', request.url),
-          {
-            method: 'GET',
-            headers: {
-              Cookie: request.cookies.toString(),
-            },
-          }
-        );
-        return NextResponse.next();
-      } catch {
-        return NextResponse.redirect(new URL('/sign-in', request.url));
-      }
-    }
-
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
   if (isPublic && accessToken) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/profile', request.url));
   }
 
   return NextResponse.next();

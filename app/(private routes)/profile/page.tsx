@@ -16,7 +16,7 @@ export default async function Profile() {
   try {
     userProfile = await getUserProfile();
   } catch (error) {
-    redirect('/login');
+    redirect('/sign-in');
   }
 
   return (
