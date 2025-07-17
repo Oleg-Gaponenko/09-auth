@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import css from './profile.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Your NoteHub Profile',
@@ -10,7 +11,13 @@ export const metadata: Metadata = {
 };
 
 export default async function Profile() {
-  const userProfile = await getUserProfile();
+  let userProfile;
+
+  try {
+    userProfile = await getUserProfile();
+  } catch (error) {
+    redirect('/login');
+  }
 
   return (
     <main className={css.mainContent}>

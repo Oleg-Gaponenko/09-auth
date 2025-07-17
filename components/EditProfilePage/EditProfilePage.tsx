@@ -20,8 +20,13 @@ export default function EditProfilePage({ user }: UserProps) {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    if (!username.trim()) {
+      toast.error('Username is required');
+      return;
+    }
+
     try {
-      await updateUserProfile({ username, avatar });
+      await updateUserProfile({ username });
       toast.success('Your profile updated!');
       router.push('/profile');
     } catch (error) {
@@ -54,7 +59,7 @@ export default function EditProfilePage({ user }: UserProps) {
               type="text"
               className={css.input}
               value={username}
-              onChange={e => setUsername(e.target.value)}
+              onChange={event => setUsername(event.target.value)}
               required
             />
           </div>
@@ -66,7 +71,8 @@ export default function EditProfilePage({ user }: UserProps) {
               type="text"
               className={css.input}
               value={avatar}
-              onChange={e => setAvatar(e.target.value)}
+              onChange={event => setAvatar(event.target.value)}
+              disabled
             />
           </div>
 

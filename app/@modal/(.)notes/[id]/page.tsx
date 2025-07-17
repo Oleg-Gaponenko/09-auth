@@ -1,4 +1,4 @@
-import { fetchNoteById } from '@/lib/api/api';
+import { fetchNoteById } from '@/lib/api/clientApi';
 import { notFound } from 'next/navigation';
 import {
   HydrationBoundary,

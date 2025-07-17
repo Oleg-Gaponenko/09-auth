@@ -18,11 +18,11 @@ import { NoteTag } from '@/types/note';
 import Link from 'next/link';
 
 interface NotesClientProps {
-  initialData: NoteHubResponse;
+  // initialData: NoteHubResponse;
   tag?: NoteTag;
 }
 
-export default function NotesClient({ initialData, tag }: NotesClientProps) {
+export default function NotesClient({ tag }: NotesClientProps) {
   const [searchNote, setSearchNote] = useState('');
   const [debouncedSearch] = useDebounce(searchNote, 500);
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,7 +44,7 @@ export default function NotesClient({ initialData, tag }: NotesClientProps) {
         tag,
       }),
     placeholderData: previousData => previousData,
-    initialData,
+    // initialData,
   });
 
   const totalPages = data?.totalPages ?? 1;
@@ -57,7 +57,7 @@ export default function NotesClient({ initialData, tag }: NotesClientProps) {
           <Pagination
             currentPage={currentPage}
             onPageChange={setCurrentPage}
-            totalPages={data.totalPages}
+            totalPages={totalPages}
           />
         )}
         <Link href={'/notes/action/create'} className={css.button}>

@@ -4,7 +4,7 @@ import AbsentDataMessage from '@/components/AbsentDataMessage/AbsentDataMessage'
 import Loader from '@/components/Loader/Loader';
 import Modal from '@/components/Modal/Modal';
 import NotePreview from '@/components/NotePreview/NotePreview';
-import { fetchNoteById } from '@/lib/api/api';
+import { fetchNoteById } from '@/lib/api/clientApi';
 import { Note } from '@/types/note';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';

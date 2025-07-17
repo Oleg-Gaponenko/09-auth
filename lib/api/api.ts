@@ -7,6 +7,11 @@ export const instance = axios.create({
   withCredentials: true,
 });
 
+export const serverInstance = axios.create({
+  baseURL: `${process.env.API_URL}/api`,
+  withCredentials: true,
+});
+
 export function handleError(error: unknown, errorMessage: string): never {
   if (axios.isAxiosError(error)) {
     const message = error.response?.data?.message || error.message;
