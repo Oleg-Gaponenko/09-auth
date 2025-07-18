@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
+import AuthProvider from '@/components/AuthProvider/AuthProvider';
 
-export default function Private({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+export default function Private({ children }: { children: React.ReactNode }) {
+  return <AuthProvider>{children}</AuthProvider>;
 }

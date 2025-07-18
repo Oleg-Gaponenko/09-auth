@@ -28,6 +28,7 @@ export default function AuthProvider({
   const isPrivate = privateRoutes.some(route => pathname.startsWith(route));
 
   useEffect(() => {
+    let isMounted = true;
     const verifySession = async () => {
       try {
         const res = await fetch('/api/auth/session', {
@@ -35,30 +36,44 @@ export default function AuthProvider({
           credentials: 'include',
         });
 
+        if (!isMounted) return;
+
         if (res.status === 200) {
           const user: User = await res.json();
           if (user && user.email) {
             setUser(user);
           } else {
             clearIsAuthenticated();
-            if (isPrivate) router.push('/sign-in');
+            if (isPrivate) {
+              router.push('/sign-in');
+            }
           }
         } else {
           clearIsAuthenticated();
-          if (isPrivate) router.push('/sign-in');
+          if (isPrivate) {
+            router.push('/sign-in');
+          }
         }
       } catch {
         clearIsAuthenticated();
-        if (isPrivate) router.push('/sign-in');
+        if (isPrivate) {
+          router.push('/sign-in');
+        }
       } finally {
-        setCheckingSession(false);
+        if (isMounted) setCheckingSession(false);
       }
     };
 
     verifySession();
+
+    return () => {
+      isMounted = false;
+    };
   }, [pathname, isPrivate, router, setUser, clearIsAuthenticated]);
 
-  if (checkingSession) return <Loader />;
+  if (checkingSession) {
+    return <Loader />;
+  }
 
   return <>{children}</>;
 }

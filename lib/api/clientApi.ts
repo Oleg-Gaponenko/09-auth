@@ -1,7 +1,5 @@
 import { Note, NoteTag } from '@/types/note';
-import { handleError, instance } from '../api/api';
 import { User } from '@/types/user';
-import { AxiosResponse } from 'axios';
 
 interface AuthenticationData {
   email: string;
@@ -31,46 +29,46 @@ interface UpdateUserProfile {
   avatar?: string;
 }
 
-export async function userRegistration(
-  data: AuthenticationData
-): Promise<User> {
-  try {
-    const response: AxiosResponse<User> = await instance.post(
-      'auth/register',
-      data
-    );
-    return response.data;
-  } catch (error) {
-    return handleError(
-      error,
-      'Oops! Sign up failed. Please check your details and try again.'
-    );
+export async function userRegistration(data: AuthenticationData): Promise<User> {
+  const response = await fetch('/api/auth/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Oops! Sign up failed. Please check your details and try again.');
   }
+
+  return response.json();
 }
 
 export async function userLogIn(data: AuthenticationData): Promise<User> {
-  try {
-    const response: AxiosResponse<User> = await instance.post(
-      'auth/login',
-      data
-    );
-    return response.data;
-  } catch (error) {
-    return handleError(
-      error,
-      'Oops! Login failed. Please check your email and password and try again.'
-    );
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Oops! Login failed. Please check your email and password and try again.');
   }
+
+  return response.json();
 }
 
 export async function userLogOut(): Promise<void> {
-  try {
-    await instance.post('auth/logout');
-  } catch (error) {
-    return handleError(
-      error,
-      'Oops! Something went wrong while logging out. Please try again.'
-    );
+  const response = await fetch('/api/auth/logout', {
+    method: 'POST',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Oops! Something went wrong while logging out. Please try again.');
   }
 }
 
@@ -80,75 +78,61 @@ export async function fetchNotes({
   perPage = 12,
   tag,
 }: NoteHubParams): Promise<NoteHubResponse> {
-  try {
-    const params: Record<string, string | number> = {
-      page,
-      perPage,
-    };
+  const params = new URLSearchParams();
+  params.set('page', String(page));
+  params.set('perPage', String(perPage));
+  if (search) params.set('search', search);
+  if (tag) params.set('tag', tag);
 
-    if (search.trim()) {
-      params.search = search.trim();
-    }
+  const response = await fetch(`/api/notes?${params.toString()}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
 
-    if (tag) {
-      params.tag = tag;
-    }
-
-    const response: AxiosResponse<NoteHubResponse> = await instance.get(
-      '/notes',
-      {
-        params,
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    return handleError(error, 'Cannot fetch notes');
-  }
+  if (!response.ok) throw new Error('Cannot fetch notes');
+  return response.json();
 }
 
 export async function createNote(newNote: CreateNoteParams): Promise<Note> {
-  try {
-    const response: AxiosResponse<Note> = await instance.post(
-      '/notes',
-      newNote
-    );
-    return response.data;
-  } catch (error) {
-    return handleError(error, 'Cannot create a note');
-  }
+  const response = await fetch('/api/notes', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newNote),
+  });
+
+  if (!response.ok) throw new Error('Cannot create a note');
+  return response.json();
 }
 
 export async function deleteNote(noteId: number): Promise<Note> {
-  try {
-    const response: AxiosResponse<Note> = await instance.delete(
-      `/notes/${noteId}`
-    );
-    return response.data;
-  } catch (error) {
-    return handleError(error, 'Cannot delete a note');
-  }
+  const response = await fetch(`/api/notes/${noteId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+
+  if (!response.ok) throw new Error('Cannot delete note');
+  return response.json();
 }
 
 export async function fetchNoteById(noteId: number): Promise<Note> {
-  try {
-    const response: AxiosResponse<Note> = await instance.get(
-      `/notes/${noteId}`
-    );
-    return response.data;
-  } catch (error) {
-    return handleError(error, 'Cannot fetch a note by ID');
-  }
+  const response = await fetch(`/api/notes/${noteId}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) throw new Error('Cannot fetch note by ID');
+  return response.json();
 }
 
-export async function updateUserProfile (data: UpdateUserProfile): Promise<User> {
-  try {
-    const response: AxiosResponse<User> = await instance.patch(
-      '/users/me',
-      data
-    );
-    return response.data;
-  } catch (error) {
-    return handleError(error, 'Cannot update your profile! Please try again!');
-  }
-};
+export async function updateUserProfile(data: UpdateUserProfile): Promise<User> {
+  const response = await fetch('/api/users/me', {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) throw new Error('Cannot update profile');
+  return response.json();
+}

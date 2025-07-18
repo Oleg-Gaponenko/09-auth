@@ -11,11 +11,11 @@ interface State {
 export const useAuthenticationStore = create<State> ((set) => ({
     user: null,
     isAuthenticated: false,
-    setUser: (user) => 
-      set ({
+    setUser: (user: User) => 
+      set (() => ({
         user,
-        isAuthenticated: true,
-    }),
+        isAuthenticated: !!user?.email,
+    })),
     clearIsAuthenticated: () =>
         set ({
             user: null,

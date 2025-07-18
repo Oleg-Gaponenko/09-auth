@@ -4,11 +4,9 @@ import { handleError, serverInstance } from "./api";
 import { AxiosResponse } from "axios";
 
 export const getUserProfile = async (): Promise<User> => {
+  console.log('[DEBUG] Base URL:', serverInstance.defaults.baseURL);
   const cookieStore = await cookies();
-  const cookie = cookieStore
-    .getAll()
-    .map(({ name, value }) => `${name}=${value}`)
-    .join("; ");
+  const cookie = cookieStore.toString();
 
   try {
     const response: AxiosResponse<User> = await serverInstance.get('/users/me', {
@@ -21,6 +19,7 @@ export const getUserProfile = async (): Promise<User> => {
 
     return response.data;
   } catch (error: any) {
+        console.error('[DEBUG] Error from /users/me:', error?.response?.data);
       if (error?.response?.status === 401) {
         throw new Error('Unauthorized');
       }
