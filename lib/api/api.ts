@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL + '/api';
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const instance = axios.create({
   baseURL: baseUrl,
@@ -8,7 +8,7 @@ export const instance = axios.create({
 });
 
 export const serverInstance = axios.create({
-  baseURL: process.env.API_URL + '/api',
+  baseURL: process.env.API_URL,
   withCredentials: true,
 });
 
