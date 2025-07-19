@@ -125,6 +125,23 @@ export const createNote = async (note: CreateNoteParams): Promise<Note> => {
 
     return data;
   } catch (error) {
-    handleError(error, 'Cannot create note (server)');
+    handleError(error, 'Cannot create note');
   }
 };
+
+export async function checkSession() {
+
+    const cookieStore = cookies();
+    const cookie = cookieStore.toString();
+  try {
+    const response = await serverInstance.get('/auth/session', {
+      headers: {
+        Cookie: cookie,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    return null;
+  }
+}

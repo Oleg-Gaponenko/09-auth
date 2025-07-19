@@ -1,6 +1,6 @@
 import { NoteTag } from '@/types/note';
 import NotesClient from './Notes.client';
-// import { fetchNotes } from '@/lib/api/clientApi';
+import { getNotes } from '@/lib/api/serverApi';
 import { Metadata } from 'next';
 
 interface NotesPageProps {
@@ -54,7 +54,7 @@ export default async function NotesPage({ params }: NotesPageProps) {
     initialTag && initialTag.toLowerCase() !== 'all'
       ? (initialTag as NoteTag)
       : undefined;
-  // const notesData = await fetchNotes({ tag });
+  const notesData = await getNotes({ tag });
 
-  return <NotesClient tag={tag} />;
+  return <NotesClient tag={tag} initialData={notesData} />;
 }
