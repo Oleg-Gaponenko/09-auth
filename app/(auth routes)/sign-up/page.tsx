@@ -25,6 +25,7 @@ export default function SignUpPage() {
       const user = await userRegistration({ email, password });
       setUser(user);
       router.push('/profile');
+      // router.refresh();
     } catch (error: any) {
       setError(
         error?.message ||

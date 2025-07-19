@@ -26,6 +26,7 @@ export default function SignInPage() {
       const user = await userLogIn({ email, password });
       setUser(user);
       router.push('/profile');
+      // router.refresh();
     } catch (error: any) {
       setError(
         error?.message ||

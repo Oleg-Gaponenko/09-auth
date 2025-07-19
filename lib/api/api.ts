@@ -3,12 +3,12 @@ import axios from 'axios';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const instance = axios.create({
-  baseURL: baseUrl,
+  baseURL: '/api',
   withCredentials: true,
 });
 
 export const serverInstance = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: process.env.API_URL || 'https://notehub-api.goit.study',
   withCredentials: true,
 });
 

@@ -2,9 +2,10 @@ import { User } from "@/types/user";
 import { cookies } from "next/headers";
 import { handleError, serverInstance } from "./api";
 import { AxiosResponse } from "axios";
+import { CreateNoteParams, NoteHubParams, NoteHubResponse, UpdateUserProfile } from "./clientApi";
+import { Note } from "@/types/note";
 
 export const getUserProfile = async (): Promise<User> => {
-  console.log('[DEBUG] Base URL:', serverInstance.defaults.baseURL);
   const cookieStore = await cookies();
   const cookie = cookieStore.toString();
 
@@ -19,7 +20,6 @@ export const getUserProfile = async (): Promise<User> => {
 
     return response.data;
   } catch (error: any) {
-        console.error('[DEBUG] Error from /users/me:', error?.response?.data);
       if (error?.response?.status === 401) {
         throw new Error('Unauthorized');
       }
@@ -27,29 +27,104 @@ export const getUserProfile = async (): Promise<User> => {
   }
 };
 
-// export async function fetchNotesServer({ tag }: { tag?: string }): Promise<NoteHubResponse> {
-//   const cookieStore = await cookies();
-//   const cookie = cookieStore
-//     .getAll()
-//     .map(({ name, value }) => `${name}=${value}`)
-//     .join('; ');
+export const getUser = async (): Promise<User | null> => {
+  const cookieStore = cookies();
 
-//   try {
-//     const response = await serverInstance.get<NoteHubResponse>(`/notes`, {
-//       params: {
-//         tag: tag || undefined,
-//         page: 1,
-//         perPage: 12,
-//       },
-//       headers: {
-//         Cookie: cookie,
-//         Accept: 'application/json',
-//       },
-//       withCredentials: true,
-//     });
+  try {
+    const { data } = await serverInstance.get<User>("/users/me", {
+      headers: { Cookie: cookieStore.toString() },
+    });
+    return data;
+  } catch (error) {
+    return null;
+  }
+};
 
-//     return response.data;
-//   } catch (error) {
-//     handleError(error, 'Cannot fetch notes');
-//   }
-// }
+export const updateUserProfile = async (data: UpdateUserProfile): Promise<User> => {
+  const cookieStore = cookies();
+  const cookie = cookieStore.toString();
+
+  try {
+    const { data: updatedUser } = await serverInstance.patch('/users/me', data, {
+      headers: {
+        Cookie: cookie,
+      },
+    });
+    return updatedUser;
+  } catch (error) {
+    handleError(error, 'Failed to update user');
+  }
+};
+
+export const getSession = async (): Promise<User | null> => {
+  const cookieStore = cookies();
+
+  try {
+    const { data } = await serverInstance.get('/auth/session', {
+      headers: { Cookie: cookieStore.toString() },
+    });
+    return data;
+  } catch {
+    return null;
+  }
+};
+
+export const getNotes = async ({
+  search = '',
+  page = 1,
+  perPage = 12,
+  tag,
+}: NoteHubParams): Promise<NoteHubResponse> => {
+  const cookieStore = cookies();
+  const cookie = cookieStore.toString();
+
+  try {
+    const params = {
+      page,
+      perPage,
+      ...(search && { search }),
+      ...(tag && { tag }),
+    };
+
+    const { data } = await serverInstance.get('/notes', {
+      headers: { Cookie: cookie },
+      params,
+    });
+
+    return data;
+  } catch (error) {
+    handleError(error, 'Cannot fetch notes');
+  }
+};
+
+export const getNoteById = async (noteId: number): Promise<Note> => {
+  const cookieStore = cookies();
+  const cookie = cookieStore.toString();
+
+  try {
+    const { data } = await serverInstance.get(`/notes/${noteId}`, {
+      headers: { Cookie: cookie },
+    });
+
+    return data;
+  } catch (error) {
+    handleError(error, 'Cannot fetch note by ID');
+  }
+};
+
+export const createNote = async (note: CreateNoteParams): Promise<Note> => {
+  const cookieStore = cookies();
+  const cookie = cookieStore.toString();
+
+  try {
+    const { data } = await serverInstance.post('/notes', note, {
+      headers: {
+        Cookie: cookie,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    handleError(error, 'Cannot create note (server)');
+  }
+};

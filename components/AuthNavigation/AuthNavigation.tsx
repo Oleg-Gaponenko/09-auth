@@ -5,12 +5,33 @@ import { userLogOut } from '@/lib/api/clientApi';
 import { useAuthenticationStore } from '@/lib/store/authStore';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 
 export default function AuthNavigation() {
   const router = useRouter();
-  const { user, isAuthenticated, clearIsAuthenticated } =
+  const { user, isAuthenticated, clearIsAuthenticated, setUser } =
     useAuthenticationStore();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch('/api/auth/session', {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          const user = await response.json();
+          if (user?.email) {
+            setUser(user);
+          }
+        }
+      } catch (error) {
+        console.error('[AuthNavigation] Session check failed:', error);
+      }
+    };
+
+    checkSession();
+  }, [setUser]);
 
   const handleLoggingOut = async () => {
     try {
